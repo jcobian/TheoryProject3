@@ -1,5 +1,5 @@
 import sys
-
+from transition import Transition
 class TuringMachine:
 	def __init__(self,inputFile):
 
@@ -52,6 +52,28 @@ class TuringMachine:
 		if self.acceptState == self.rejectState:
 			print 'Error: accept and reject states must be different'
 			sys.exit()
+
+		for transition in self.transitionRules:
+			#make sure each state in transition rules are valid states
+			if transition.startState not in self.states:
+				print 'Error: a transition\'s start state is not a valid state'
+				sys.exit()
+			
+			if transition.resultState not in self.states:
+				print 'Error: a transition\'s result state is not a valid state'
+				sys.exit()
+			#make sure the tapeSymbol and writeSymbol are in tape alphabet
+			if transition.tapeSymbol not in self.tapeAlphabet:
+				print 'Error: a transition\'s tape symbol is not in the tape alphabet'
+				sys.exit()
+						
+			if transition.writeSymbol not in self.tapeAlphabet:
+				print 'Error: a transition\'s write symbol is not in the tape alphabet'
+				sys.exit()
+			#make sure direction is L or R
+			if transition.direction != "L" and transition.direction != "R":
+				print 'Error: a transition\'s direction is not L or R'
+				sys.exit()
 	
 	#read input file and populate the data structures
 	def readInput(self,inputFile):
@@ -82,7 +104,23 @@ class TuringMachine:
 					self.tapeAlphabet.append(letter)
 			
 			elif(type == "T"):
-				pass	
+				transitionString = components[1]
+				transitionString = transitionString.rstrip()
+				transitionList = transitionString.split(",")
+			
+				if(len(transitionList) != 5):
+					print 'Error, a transition is invalid'
+					sys.exit()
+	
+				t_startState = transitionList[0]
+				t_tapeSymbol = transitionList[1]
+				t_resultState = transitionList[2]
+				t_writeSymbol = transitionList[3]
+				t_direction = transitionList[4]
+				
+				transition = Transition(t_startState,t_tapeSymbol,t_resultState,t_writeSymbol,t_direction)
+				self.transitionRules.append(transition)				
+			
 			elif(type == "S"):
 				self.startState = components[1].rstrip()	
 			elif(type == "F"):
