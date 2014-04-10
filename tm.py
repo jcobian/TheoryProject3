@@ -22,8 +22,19 @@ class TuringMachine:
 		self.checkForDeterminism()
 
 	def checkForDeterminism(self):
-		pass
-
+		#make sure no two transitions have the same starting state and current tape symbol
+		for transition in self.transitionRules:
+			count = 0
+			for secondTransition in self.transitionRules:
+				if transition.startState == secondTransition.startState and transition.tapeSymbol == secondTransition.tapeSymbol:		
+					count+=1
+			#count will at least be one because you will loop on yourself
+			if count >=2:
+				print 'Error: Non Deterministic. Two or more transitions have the same starting state and current tape symbol'
+				sys.exit()
+			
+			
+	
 	def checkForValidTM(self):
 		#blank character cannot be in input alphabet
 		if ' ' in self.inputAlphabet:
@@ -74,7 +85,13 @@ class TuringMachine:
 			if transition.direction != "L" and transition.direction != "R":
 				print 'Error: a transition\'s direction is not L or R'
 				sys.exit()
-	
+			#make sure no transitions from the accept or reject states
+			if transition.startState == self.acceptState:
+				print 'Error: a transition\'s start state is the accept state'
+				sys.exit()
+			if transition.startState == self.rejectState:
+				print 'Error: a transition\'s start state is the reject state'
+				sys.exit()
 	#read input file and populate the data structures
 	def readInput(self,inputFile):
 		f = open(inputFile)
