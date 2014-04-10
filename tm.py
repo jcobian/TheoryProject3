@@ -21,6 +21,14 @@ class TuringMachine:
 		#check to make sure the TM is determinisitc
 		self.checkForDeterminism()
 
+	#returns true if the given start state and current tape symbol exist in the transition rules
+	#if its false when called with the current state and the current tape symbol, then this means you should implicitly to the reject state
+	def doesTransitionExist(self,startState,tapeSymbol):
+		for transition in self.transitionRules:
+			if transition.isTransition(startState,tapeSymbol) == True:
+				return True
+		return False
+
 	def checkForDeterminism(self):
 		#make sure no two transitions have the same starting state and current tape symbol
 		for transition in self.transitionRules:
