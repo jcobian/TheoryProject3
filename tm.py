@@ -1,5 +1,6 @@
 import sys
 from transition import Transition
+from parser import Parser
 class TuringMachine:
 	def __init__(self,inputFile):
 
@@ -159,3 +160,5 @@ class TuringMachine:
 		
 if __name__ == '__main__':
 	tm = TuringMachine(sys.argv[1])
+	#parser = Parser(tm=tm)
+	#parser.start()
