@@ -160,5 +160,5 @@ class TuringMachine:
 		
 if __name__ == '__main__':
 	tm = TuringMachine(sys.argv[1])
-	#parser = Parser(tm=tm)
-	#parser.start()
+	parser = Parser(tm=tm)
+	parser.start()
