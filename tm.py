@@ -13,6 +13,7 @@ class TuringMachine:
 		self.acceptState = ''
 		self.rejectState = ''
 
+		self.currentState = ''
 		#read input file and fill in data structures
 		self.readInput(inputFile)
 		
@@ -21,6 +22,41 @@ class TuringMachine:
 		
 		#check to make sure the TM is determinisitc
 		self.checkForDeterminism()
+
+	def reset(self):
+		self.currentState = self.startState
+		
+
+	#performs transition on the given tape symbol. Returns the next direction and the symbol to write over to the parser
+	def performTransition(self,currentTapeSymbol):
+		direction = ''
+		writeSymbol = ''
+		transitionToApply = self.getTransition(self.currentState,currentTapeSymbol)
+		if transitionToApply is not None:
+			self.currentState = transitionToApply.resultState
+			writeSymbol = transitionToApply.writeSymbol
+			direction = transitionToApply.direction
+		else:
+			self.currentState = self.rejectState
+			direction = "R"
+			writeSymbol = currentTapeSymbol
+		return (direction,writeSymbol)	
+	def isInAcceptState(self):
+		if self.currentState == self.acceptState:
+			return True
+		else:
+			return False
+	def isInRejectState(self):
+		if self.currentState == self.rejectState:
+			return True
+		else:
+			return False
+
+	def getTransition(self,startState,tapeSymbol):
+		for transition in self.transitionRules:
+			if transition.isTransition(startState,tapeSymbol) == True:
+				return transition
+		return None
 
 	#returns true if the given start state and current tape symbol exist in the transition rules
 	#if its false when called with the current state and the current tape symbol, then this means you should implicitly to the reject state
@@ -55,8 +91,10 @@ class TuringMachine:
 			sys.exit()
 		#tape alphabet must include empty string
 		if ' ' not in self.tapeAlphabet:
-			print 'Error: Tape Alphabet does not include empty string'
-			sys.exit()
+			#TODO LOOK HERE
+			self.tapeAlphabet.append(' ')
+			#print 'Error: Tape Alphabet does not include empty string'
+			#sys.exit()
 		#start state should be valid state
 		if self.startState not in self.states:
 			print 'Error: start state is not in states'
@@ -148,7 +186,8 @@ class TuringMachine:
 				self.transitionRules.append(transition)				
 			
 			elif(type == "S"):
-				self.startState = components[1].rstrip()	
+				self.startState = components[1].rstrip()
+				self.currentState = self.startState	
 			elif(type == "F"):
 				finalStates = components[1]
 				finalStates = finalStates.rstrip()
